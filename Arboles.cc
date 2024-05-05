@@ -17,25 +17,24 @@ struct registro{
     registro *der;
 };
 
-registro *aux, *aux2, *raiz, *aux3;
+registro *aux, *aux2, *raiz, *auxF/*hace referencia a los auxliares utilizados para posicionar la fecha*/ ;
 
-int posicionar(){
+int posicionarCodigo(){
 
     if (aux->codigo < aux2->codigo) {
 
         if (aux2->izq != NULL){
             aux2 = aux2->izq;
-            posicionar();
+            posicionarCodigo();
         } else {
             aux2 = aux2->izq;
         }
         
-    } 
-    else if (aux->codigo > aux2->codigo){
+    } else if (aux->codigo > aux2->codigo){
         
             if(aux2->der != NULL){
             aux2 = aux2->der;
-            posicionar();
+            posicionarCodigo();
         }   
         else {
 
@@ -46,29 +45,144 @@ int posicionar(){
     return 0;
 }
 
-int registrar(){
+int PosicionarFecha(){
+
+    //año menor
+    if (auxF->year < aux2->year) {
+
+        if (aux2->izq != NULL)
+        {
+            aux2 = aux2->izq;
+            PosicionarFecha();
+
+        } else {
+
+            aux2 = aux2->izq;
+            free(auxF);
+        }
+        
+        //mismo año, menor mes
+    } else if ((auxF->year == aux2->year) && (auxF->mes < aux2->mes)){
+
+        if (aux2->izq != NULL)
+        {
+            aux2 = aux2->izq;
+            PosicionarFecha();
+
+        } else {
+
+            aux2 = aux2->izq;
+            free(auxF);
+        }
+        
+        //mismo añor, mismo mes, día menor
+    } else if((auxF->year == aux2->year) && (auxF->mes == aux2->mes) && (auxF->dia < aux2->dia)){
+
+        if (aux2->izq != NULL)
+        {
+            aux2 = aux2->izq;
+            PosicionarFecha();
+
+        } else {
+
+            aux2 = aux2->izq;
+            free(auxF);
+        }
+
+        //año mayor
+    } else if (auxF->year > aux2->year){
+
+        if (aux2->der != NULL)
+        {
+            aux2 = aux2->der;
+            PosicionarFecha();
+
+        } else {
+
+            aux2 = aux2->der;
+            free(auxF);
+        }
+
+        //mismo año, mes mayor
+
+    }   else if ((auxF->year == aux2->year) && (auxF->mes > aux2->mes)){
+
+        if (aux2->der != NULL)
+        {
+            aux2 = aux2->der;
+            PosicionarFecha();
+
+        } else {
+
+            aux2 = aux2->der;
+            free(auxF);
+        }
+        
+        //mismo añor, mismo mes, día mayor
+    } else if((auxF->year == aux2->year) && (auxF->mes == aux2->mes) && (auxF->dia > aux2->dia)){
+
+        if (aux2->der != NULL)
+        {
+            aux2 = aux2->der;
+            PosicionarFecha();
+
+        } else {
+
+            aux2 = aux2->der;
+            free(auxF);
+        }
+
+        //mismo año, mismo mes, mismo día
+    } else if ((auxF->year == aux2->year) && (auxF->mes == aux2->mes) && (auxF->dia == aux2->dia)) {
+
+        if (aux2->izq != NULL)
+        {
+            aux2 = aux2->izq;
+            PosicionarFecha();
+
+        } else {
+
+            aux2 = aux2->izq;
+            free(auxF);
+        }
+
+    }
+
+    return 0;
+
+}
+
+int datos (){
+
     aux = new registro;
-    aux3 = new registro;
+    auxF = new registro;
 
-        cout << "Nombres del estudiante: ";
-        getline(cin >> ws, aux->nombre);
+    cout << "Nombres del estudiante: ";
+    getline(cin >> ws, aux->nombre);
 
-        cout << "Apellidos del estudiante: ";
-        getline(cin >> ws, aux->apellido);
+    cout << "Apellidos del estudiante: ";
+    getline(cin >> ws, aux->apellido);
 
-        cout << "Codigo del estudiante: ";
-        cin >> aux->codigo;
+    cout << "Codigo del estudiante: ";
+    cin >> aux->codigo;
 
-        cout<<endl;
+    cout<<endl;
 
+    cout << "Ingrese el dia de nacimiento del estudiante (en orden numerico): " ;
+    cin >> aux->dia;
+    cout << "Ingrese el mes de nacimiento del estudiante (en orden numerico): ";
+    cin >> aux->mes;
+    cout << "Ingrese el a"<<char(164) <<"o de nacimiento del estudiante (en orden numerico): ";
+    cin >> aux->year;
 
-        cout << "Ingrese el dia de nacimiento del estudiante (en orden numerico): " ;
-        cin >> aux->dia;
-        cout << "Ingrese el mes de nacimiento del estudiante (en orden numerico): ";
-        cin >> aux->mes;
-        cout << "Ingrese el a"<<char(164) <<"o de nacimiento del estudiante (en orden numerico): ";
-        cin >> aux->year;
+    auxF = aux;
 
+    return 0;
+}
+
+int registrarCodigo(){
+
+        datos();
 
         if ((aux->dia <= 31 && aux->dia > 0) && (aux->mes <= 12 && aux->mes > 0) && (aux->year <= 2024 && aux->year >= 1900))
         {
@@ -84,6 +198,17 @@ int registrar(){
                 cout<<"Estudiante registrado con exito."<<endl;
                 cout<<"********************************"<<endl;
 
+                if (raiz == NULL){ 
+                
+                    raiz = aux;
+                    aux = NULL;
+                    free(aux);
+
+                }else {
+                    aux2 = raiz;
+                    posicionarCodigo();
+                }
+
             }
 
         } else  {
@@ -93,33 +218,63 @@ int registrar(){
         }
         
 
-        aux->izq = NULL;
-        aux->der = NULL;
-
-        if (raiz == NULL){ 
-
-            raiz = aux;
-            aux = NULL;
-            free(aux);
-
-        }else {
-            aux2 = raiz;
-            posicionar();
-        }
         return 0;
 
 }
 
-int preorden(registro *recursive){
-    cout<<endl;
-    cout<<"Estudiante: "<<aux->apellido<<" "<<aux->nombre<<endl<<"Codigo: "<< recursive->codigo <<endl;
+int registrarFecha(){
 
-    if(recursive->izq != NULL);
-        preorden(recursive->izq);
-    if(recursive->der != NULL);
-        preorden(recursive->der);
+    datos();
+
+    if ((aux->dia <= 31 && aux->dia > 0) && (aux->mes <= 12 && aux->mes > 0) && (aux->year <= 2024 && aux->year >= 1900))
+        {
+            if (aux->mes == 02 && aux->dia > 29)
+            {
+            
+                cout<<"Dia no valido."<<endl;
+
+            } else {
+                
+                cout<<endl;
+                cout<<"********************************"<<endl;
+                cout<<"Estudiante registrado con exito."<<endl;
+                cout<<"********************************"<<endl;
+
+                if (raiz == NULL){ 
+                
+                    raiz = aux;
+                    aux = NULL;
+                    free(aux);
+
+                }else {
+                    aux2 = raiz;
+                    PosicionarFecha();
+                }
+
+            }
+
+        } else  {
+
+            cout<<endl;
+            cout<<"Valor invalido."<<endl;
+        }
 
     return 0;
+}
+
+int preorden(registro *recursive){
+
+    cout<<endl;
+
+    cout<<"Estudiante: "<<recursive->apellido<<" "<<recursive->nombre<<endl<<"Codigo: "<< recursive->codigo <<endl;
+
+        if(recursive->izq != NULL)
+            preorden(recursive->izq);
+        if(recursive->der != NULL)
+            preorden(recursive->der);
+
+    
+        return 0;
 
 }
 
@@ -135,28 +290,10 @@ int recoPre(){ //RecorrerPre
 }
 
 int indorden(registro *recursive){
-
-    cout<<endl;
-
-    if(recursive->izq != NULL);
-    indorden(recursive->izq);
-
-    cout<<"Estudiante: "<<aux->apellido<<" "<<aux->nombre<<endl<<"Codigo: "<< recursive->codigo <<endl;
-
-    if(recursive->der != NULL);
-    indorden(recursive->der);
-
     return 0;
 }
 
 int recoIn(){
-
-    if (aux != NULL)
-    {
-        indorden(aux);
-    }
-    
-    
     return 0;
 }
 
@@ -181,7 +318,7 @@ int main(){
     {
         cout<<""<<endl;
         cout<<"-------------------------------------------------------------"<<endl;
-        cout<<"       INSTITUTO COMERCIAL BOLIVARIANO 'OLAS DEL MAR'        "<<endl;
+        cout<<"           INSTITUTO COMERCIAL BOLIViANO 'OLAS DEL MAR'      "<<endl;
         cout<<"-------------------------------------------------------------"<<endl;
         cout<<"1.       AGREGAR DATOS DE ESTUDIANTE."<<endl;
         cout<<"2.       BUSCAR DATOS DE ESTUDIANTE."<<endl;
@@ -197,7 +334,7 @@ int main(){
             
             case 1:
 
-                registrar();
+                registrarCodigo();
                 cout<<endl;
                 break;
 
