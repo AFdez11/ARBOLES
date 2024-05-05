@@ -154,8 +154,8 @@ int PosicionarFecha(){
 
 int datos (){
 
-    aux = new registro;
-    auxF = new registro;
+    aux = (struct registro *)malloc(sizeof(struct registro));
+    auxF = (struct registro *)malloc(sizeof(struct registro));
 
     cout << "Nombres del estudiante: ";
     getline(cin >> ws, aux->nombre);
@@ -262,16 +262,21 @@ int registrarFecha(){
     return 0;
 }
 
+//Funciones Recorridos (Pre, Post, In)
+
 int preorden(registro *recursive){
 
     cout<<endl;
 
     cout<<"Estudiante: "<<recursive->apellido<<" "<<recursive->nombre<<endl<<"Codigo: "<< recursive->codigo <<endl;
 
-        if(recursive->izq != NULL)
+        if(recursive->izq != NULL){            
             preorden(recursive->izq);
-        if(recursive->der != NULL)
+        }
+
+        if(recursive->der != NULL){
             preorden(recursive->der);
+        }
 
     
         return 0;
@@ -290,23 +295,69 @@ int recoPre(){ //RecorrerPre
 }
 
 int indorden(registro *recursive){
+
+    if (recursive->izq != NULL){
+        recoIn(recursive->izq);
+    }
+
+    cout<<endl;
+    cout<<"Estudiante: "<<recursive->apellido<<" "<<recursive->nombre<<endl<<"Codigo: "<< recursive->codigo <<endl;
+
+    if (recursive->der != NULL){
+        recoIn(recursive->der);
+    }
+
     return 0;
 }
 
 int recoIn(){
+
+    aux = raiz;
+
+    if (aux != NULL){
+        indorden(aux);
+    }
+
     return 0;
+}
+
+int postorden(registro *recursive){
+
+    if(recursive->izq != NULL){
+        postorden(recursive->izq);
+    }
+
+    if(recursive->der != NULL){
+        postorden(recursive->der);
+    }
+
+    cout<<endl;
+    cout<<"Estudiante: "<<recursive->apellido<<" "<<recursive->nombre<<endl<<"Codigo: "<< recursive->codigo <<endl;
+  
+    return 0;
+
 }
 
 int recoPost(){
-
+    aux = raiz;
+    if (aux != NULL)
+    {
+        postorden(aux);
+    }
     return 0;
 }
+
+//Eliminar y buscar
 
 int buscar(){
 
   return 0;
 }
-    
+
+int eliminar(){
+
+  return 0;
+}
 
 int main(){
 
