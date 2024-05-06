@@ -15,9 +15,12 @@ struct registro{
 
     registro *izq;
     registro *der;
+    registro *izq2;
+    registro *der2;
 };
 
-registro *aux, *aux2, *raiz, *auxF/*hace referencia a los auxliares utilizados para posicionar la fecha*/ ;
+registro *aux, *aux2, *raiz;
+registro *raizF, *auxF, *auxF2; /*hace referencia a los auxliares utilizados para posicionar la fecha*/ ;
 
 int posicionarCodigo(){
 
@@ -27,7 +30,8 @@ int posicionarCodigo(){
             aux2 = aux2->izq;
             posicionarCodigo();
         } else {
-            aux2 = aux2->izq;
+            aux2->izq = aux;
+            aux = NULL;
         }
         
     } else if (aux->codigo > aux2->codigo){
@@ -39,6 +43,7 @@ int posicionarCodigo(){
         else {
 
             aux2->der = aux;
+            aux = NULL;
         }
         
     }
@@ -48,101 +53,108 @@ int posicionarCodigo(){
 int PosicionarFecha(){
 
     //año menor
-    if (auxF->year < aux2->year) {
+    if (auxF->year < auxF2->year) {
 
-        if (aux2->izq != NULL)
+        if (auxF2->der2 != NULL)
         {
-            aux2 = aux2->izq;
+            auxF2 = auxF2->der2;
             PosicionarFecha();
 
         } else {
 
-            aux2 = aux2->izq;
+            auxF2->der2 = auxF;
+            auxF = NULL;
             free(auxF);
         }
         
         //mismo año, menor mes
-    } else if ((auxF->year == aux2->year) && (auxF->mes < aux2->mes)){
+    } else if ((auxF->year == auxF2->year) && (auxF->mes < auxF2->mes)){
 
-        if (aux2->izq != NULL)
+        if (auxF2->der2!= NULL)
         {
-            aux2 = aux2->izq;
+            auxF2 = auxF2->der2;
             PosicionarFecha();
 
         } else {
 
-            aux2 = aux2->izq;
+            auxF2->der2 = auxF;
+            auxF = NULL;
             free(auxF);
         }
         
         //mismo añor, mismo mes, día menor
-    } else if((auxF->year == aux2->year) && (auxF->mes == aux2->mes) && (auxF->dia < aux2->dia)){
+    } else if((auxF->year == auxF2->year) && (auxF->mes == auxF2->mes) && (auxF->dia < auxF2->dia)){
 
-        if (aux2->izq != NULL)
+        if (auxF2->der2 != NULL)
         {
-            aux2 = aux2->izq;
+            auxF2 = auxF2->der2;
             PosicionarFecha();
 
         } else {
 
-            aux2 = aux2->izq;
+            auxF2->der2 = auxF;
+            auxF = NULL;
             free(auxF);
         }
 
         //año mayor
-    } else if (auxF->year > aux2->year){
+    } else if (auxF->year > auxF2->year){
 
-        if (aux2->der != NULL)
+        if (auxF2->izq2 != NULL)
         {
-            aux2 = aux2->der;
+            auxF2 = auxF2->izq2;
             PosicionarFecha();
 
         } else {
 
-            aux2 = aux2->der;
+            auxF2->izq2 = auxF;
+            auxF = NULL;
             free(auxF);
         }
 
         //mismo año, mes mayor
 
-    }   else if ((auxF->year == aux2->year) && (auxF->mes > aux2->mes)){
+    }   else if ((auxF->year == auxF2->year) && (auxF->mes > auxF2->mes)){
 
-        if (aux2->der != NULL)
+        if (auxF2->izq2 != NULL)
         {
-            aux2 = aux2->der;
+            auxF2 = auxF2->izq2;
             PosicionarFecha();
 
         } else {
 
-            aux2 = aux2->der;
+            auxF2->izq2 = auxF;
+            auxF = NULL;
             free(auxF);
         }
         
         //mismo añor, mismo mes, día mayor
-    } else if((auxF->year == aux2->year) && (auxF->mes == aux2->mes) && (auxF->dia > aux2->dia)){
+    } else if((auxF->year == auxF2->year) && (auxF->mes == auxF2->mes) && (auxF->dia > auxF2->dia)){
 
-        if (aux2->der != NULL)
+        if (auxF2->izq2 != NULL)
         {
-            aux2 = aux2->der;
+            auxF2 = auxF2->izq2;
             PosicionarFecha();
 
         } else {
 
-            aux2 = aux2->der;
+            auxF2->izq2 = auxF;
+            auxF = NULL;
             free(auxF);
         }
 
         //mismo año, mismo mes, mismo día
-    } else if ((auxF->year == aux2->year) && (auxF->mes == aux2->mes) && (auxF->dia == aux2->dia)) {
+    } else if ((auxF->year == auxF2->year) && (auxF->mes == auxF2->mes) && (auxF->dia == auxF2->dia)) {
 
-        if (aux2->izq != NULL)
+        if (auxF2->izq2 != NULL)
         {
-            aux2 = aux2->izq;
+            auxF2 = auxF2->izq2;
             PosicionarFecha();
 
         } else {
 
-            aux2 = aux2->izq;
+            auxF2->izq2 = auxF;
+            auxF = NULL;
             free(auxF);
         }
 
@@ -154,8 +166,8 @@ int PosicionarFecha(){
 
 int datos (){
 
-    aux = (struct registro *)malloc(sizeof(struct registro));
-    auxF = (struct registro *)malloc(sizeof(struct registro));
+    aux = new registro();
+    auxF = new registro();
 
     cout << "Nombres del estudiante: ";
     getline(cin >> ws, aux->nombre);
@@ -175,10 +187,15 @@ int datos (){
     cout << "Ingrese el a"<<char(164) <<"o de nacimiento del estudiante (en orden numerico): ";
     cin >> aux->year;
 
+
+    aux->izq = aux->der=NULL;
+    auxF->izq2 = auxF->der2 = NULL;
     auxF = aux;
+
 
     return 0;
 }
+
 
 int registrarCodigo(){
 
@@ -217,50 +234,27 @@ int registrarCodigo(){
             cout<<"Valor invalido."<<endl;
         }
         
-
         return 0;
 
 }
 
 int registrarFecha(){
 
-    datos();
+        if (raizF == NULL){ 
+        
+            raizF = auxF;
+            auxF = NULL;
+            free(auxF);
 
-    if ((aux->dia <= 31 && aux->dia > 0) && (aux->mes <= 12 && aux->mes > 0) && (aux->year <= 2024 && aux->year >= 1900))
-        {
-            if (aux->mes == 02 && aux->dia > 29)
-            {
-            
-                cout<<"Dia no valido."<<endl;
+        }else {
+            auxF2 = raizF;
+            PosicionarFecha();
 
-            } else {
-                
-                cout<<endl;
-                cout<<"********************************"<<endl;
-                cout<<"Estudiante registrado con exito."<<endl;
-                cout<<"********************************"<<endl;
-
-                if (raiz == NULL){ 
-                
-                    raiz = aux;
-                    aux = NULL;
-                    free(aux);
-
-                }else {
-                    aux2 = raiz;
-                    PosicionarFecha();
-                }
-
-            }
-
-        } else  {
-
-            cout<<endl;
-            cout<<"Valor invalido."<<endl;
         }
 
     return 0;
 }
+
 
 //Funciones Recorridos (Pre, Post, In)
 
@@ -297,14 +291,14 @@ int recoPre(){ //RecorrerPre
 int indorden(registro *recursive){
 
     if (recursive->izq != NULL){
-        recoIn(recursive->izq);
+        indorden(recursive->izq);
     }
 
     cout<<endl;
     cout<<"Estudiante: "<<recursive->apellido<<" "<<recursive->nombre<<endl<<"Codigo: "<< recursive->codigo <<endl;
 
     if (recursive->der != NULL){
-        recoIn(recursive->der);
+        indorden(recursive->der);
     }
 
     return 0;
@@ -386,6 +380,7 @@ int main(){
             case 1:
 
                 registrarCodigo();
+                registrarFecha();
                 cout<<endl;
                 break;
 
@@ -415,7 +410,7 @@ int main(){
                         recoPost(); break;
 
                     case 4:
-                        cout<<"¡Muchas gracias por confiar en nosotros!"<<endl;
+                        cout<<"Muchas gracias por confiar en nosotros!"<<endl;
                         break;
 
                     default:
