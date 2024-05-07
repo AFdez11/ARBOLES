@@ -1,3 +1,7 @@
+//created by:
+//Cabezas Pinillo Luis (Filantropo anónimo y Fotografo de google maps por desparche)
+//Fernandez Fernando (Consejero de parejas y Batman en sus tiempos libres)
+
 #include <iostream>
 #include <malloc.h>
 #include <string.h>
@@ -5,22 +9,21 @@ using namespace std;
 
 
 struct registro{
-    string nombre;
-    string apellido;
-    int codigo = 0;
+    char nombre[30];
+    char apellido[30];
+    int codigo;
 
-    int dia = 0;
-    int mes = 0;
-    int year = 0;
+    int dia;
+    int mes;
+    int year;
 
     registro *izq;
     registro *der;
-    registro *izq2;
-    registro *der2;
 };
 
 registro *aux, *aux2, *raiz;
-registro *raizF, *auxF, *auxF2; /*hace referencia a los auxliares utilizados para posicionar la fecha*/ ;
+registro *raizF, *auxF, *auxF2; /*hace referencia a los auxliares utilizados para posicionar la fecha*/
+registro *CodigoB, *padre; 
 
 int posicionarCodigo(){
 
@@ -55,14 +58,14 @@ int PosicionarFecha(){
     //año menor
     if (auxF->year < auxF2->year) {
 
-        if (auxF2->der2 != NULL)
+        if (auxF2->der!= NULL)
         {
-            auxF2 = auxF2->der2;
+            auxF2 = auxF2->der;
             PosicionarFecha();
 
         } else {
 
-            auxF2->der2 = auxF;
+            auxF2->der = auxF;
             auxF = NULL;
             free(auxF);
         }
@@ -70,14 +73,14 @@ int PosicionarFecha(){
         //mismo año, menor mes
     } else if ((auxF->year == auxF2->year) && (auxF->mes < auxF2->mes)){
 
-        if (auxF2->der2!= NULL)
+        if (auxF2->der!= NULL)
         {
-            auxF2 = auxF2->der2;
+            auxF2 = auxF2->der;
             PosicionarFecha();
 
         } else {
 
-            auxF2->der2 = auxF;
+            auxF2->der = auxF;
             auxF = NULL;
             free(auxF);
         }
@@ -85,14 +88,14 @@ int PosicionarFecha(){
         //mismo añor, mismo mes, día menor
     } else if((auxF->year == auxF2->year) && (auxF->mes == auxF2->mes) && (auxF->dia < auxF2->dia)){
 
-        if (auxF2->der2 != NULL)
+        if (auxF2->der != NULL)
         {
-            auxF2 = auxF2->der2;
+            auxF2 = auxF2->der;
             PosicionarFecha();
 
         } else {
 
-            auxF2->der2 = auxF;
+            auxF2->der = auxF;
             auxF = NULL;
             free(auxF);
         }
@@ -100,14 +103,14 @@ int PosicionarFecha(){
         //año mayor
     } else if (auxF->year > auxF2->year){
 
-        if (auxF2->izq2 != NULL)
+        if (auxF2->izq != NULL)
         {
-            auxF2 = auxF2->izq2;
+            auxF2 = auxF2->izq;
             PosicionarFecha();
 
         } else {
 
-            auxF2->izq2 = auxF;
+            auxF2->izq = auxF;
             auxF = NULL;
             free(auxF);
         }
@@ -116,14 +119,14 @@ int PosicionarFecha(){
 
     }   else if ((auxF->year == auxF2->year) && (auxF->mes > auxF2->mes)){
 
-        if (auxF2->izq2 != NULL)
+        if (auxF2->izq != NULL)
         {
-            auxF2 = auxF2->izq2;
+            auxF2 = auxF2->izq;
             PosicionarFecha();
 
         } else {
 
-            auxF2->izq2 = auxF;
+            auxF2->izq = auxF;
             auxF = NULL;
             free(auxF);
         }
@@ -131,14 +134,14 @@ int PosicionarFecha(){
         //mismo añor, mismo mes, día mayor
     } else if((auxF->year == auxF2->year) && (auxF->mes == auxF2->mes) && (auxF->dia > auxF2->dia)){
 
-        if (auxF2->izq2 != NULL)
+        if (auxF2->izq != NULL)
         {
-            auxF2 = auxF2->izq2;
+            auxF2 = auxF2->izq;
             PosicionarFecha();
 
         } else {
 
-            auxF2->izq2 = auxF;
+            auxF2->izq = auxF;
             auxF = NULL;
             free(auxF);
         }
@@ -146,14 +149,14 @@ int PosicionarFecha(){
         //mismo año, mismo mes, mismo día
     } else if ((auxF->year == auxF2->year) && (auxF->mes == auxF2->mes) && (auxF->dia == auxF2->dia)) {
 
-        if (auxF2->izq2 != NULL)
+        if (auxF2->izq != NULL)
         {
-            auxF2 = auxF2->izq2;
+            auxF2 = auxF2->izq;
             PosicionarFecha();
 
         } else {
 
-            auxF2->izq2 = auxF;
+            auxF2->izq = auxF;
             auxF = NULL;
             free(auxF);
         }
@@ -166,16 +169,16 @@ int PosicionarFecha(){
 
 int datos (){
 
-    aux = new registro();
-    auxF = new registro();
+    aux = ((struct registro *) malloc (sizeof(struct registro)));
+    auxF = ((struct registro *) malloc (sizeof(struct registro)));
 
-    cout << "Nombres del estudiante: ";
-    getline(cin >> ws, aux->nombre);
+    cout << "Ingrese el primer nombre del estudiante: ";
+    cin>>aux->nombre;
 
-    cout << "Apellidos del estudiante: ";
-    getline(cin >> ws, aux->apellido);
+    cout << "Ingrese el primer apellido del estudiante: ";
+    cin>>aux->apellido;
 
-    cout << "Codigo del estudiante: ";
+    cout << "Ingrese el codigo del estudiante: ";
     cin >> aux->codigo;
 
     cout<<endl;
@@ -188,10 +191,15 @@ int datos (){
     cin >> aux->year;
 
 
-    aux->izq = aux->der=NULL;
-    auxF->izq2 = auxF->der2 = NULL;
-    auxF = aux;
+    aux->izq = aux->der=NULL;    
+    auxF->izq = auxF->der= NULL;
 
+    auxF->codigo = aux->codigo;
+    strcpy(auxF->nombre, aux->nombre);
+    strcpy(auxF->apellido, aux->apellido);
+    auxF->year = aux->year;
+    auxF->mes = aux->mes;
+    auxF->dia = aux->dia;
 
     return 0;
 }
@@ -277,16 +285,6 @@ int preorden(registro *recursive){
 
 }
 
-int recoPre(){ //RecorrerPre
-
-    aux = raiz;
-    if (aux != NULL)
-    {
-        preorden(aux);
-    }
-
-    return 0;
-}
 
 int indorden(registro *recursive){
 
@@ -304,16 +302,6 @@ int indorden(registro *recursive){
     return 0;
 }
 
-int recoIn(){
-
-    aux = raiz;
-
-    if (aux != NULL){
-        indorden(aux);
-    }
-
-    return 0;
-}
 
 int postorden(registro *recursive){
 
@@ -332,30 +320,166 @@ int postorden(registro *recursive){
 
 }
 
-int recoPost(){
-    aux = raiz;
-    if (aux != NULL)
-    {
-        postorden(aux);
-    }
-    return 0;
-}
 
 //Eliminar y buscar
 
-int buscar(){
+int buscar(int BuscarC, registro *rama){
+    
+
+    if (BuscarC == rama->codigo)
+    {
+        CodigoB = rama;
+    } else {
+
+        if (rama->izq != NULL)
+        {
+            buscar(BuscarC, rama->izq);
+        }
+        if (rama->der != NULL)
+        {
+            buscar(BuscarC, rama->der);
+        }
+        
+        
+    }
+    
 
   return 0;
 }
 
-int eliminar(){
+int buscarPadre(registro *rama){
+
+    if ((rama->izq != NULL)&&(rama->izq != CodigoB))
+    {
+        buscarPadre(rama->izq);
+
+    } else if (rama->izq == CodigoB){
+
+        padre = rama;
+    }
+
+
+    if ((rama->der != NULL)&&(rama->der != CodigoB))
+    {
+        buscarPadre(rama->der);
+
+    } else if (rama->der == CodigoB){
+        
+        padre = rama;
+    }
+    
+
+    return 0;
+}
+
+int eliminarCaso1(registro *rama){
+
+    if (CodigoB != rama)
+    {
+        buscarPadre(rama);
+
+        if (padre->izq == CodigoB)
+        {
+            padre->izq = NULL;
+
+        } else if (padre->der == CodigoB){
+
+            padre->der = NULL;
+
+        }
+
+        free(CodigoB);
+        
+    }
+    
+    return 0;
+}
+
+
+int eliminarCaso2(registro *rama){
+
+    if (CodigoB != rama)
+    {
+        buscarPadre(rama);
+
+        if ((padre->izq == CodigoB) && (padre->izq != NULL))
+        {
+            padre->izq = CodigoB->izq;
+        } else {
+
+            padre->izq = CodigoB->der;
+
+        }
+        
+    } else if (padre->der == CodigoB){
+        
+        if (CodigoB->izq != NULL)
+        {
+            padre->der = CodigoB->izq;
+
+        } else {
+
+            padre->der = CodigoB->der;
+        }
+        
+        free(CodigoB);
+
+    }
 
   return 0;
+}
+
+int eliminar (){
+
+    int buscarC = 0; //lo utilizaremos para almacenar el código del estudiante a eliminar
+
+    cout<<"Ingrese el codigo del estudiante a eliminar: ";
+    cin>>buscarC;
+
+    cout<<endl;
+
+    buscar(buscarC, raiz);
+    if ((CodigoB->der == NULL) && (CodigoB->izq == NULL))
+    {
+        eliminarCaso1(raiz);
+        cout<<"Estudiante eliminado."<<endl;
+
+
+    } else if ((CodigoB->der == NULL) && (CodigoB->der != NULL)  &&
+              (CodigoB->izq == NULL)   && (CodigoB->izq != NULL)){
+
+        eliminarCaso2(raiz);
+        cout<<"Estudiante eliminado."<<endl;    
+
+    } else if (buscarC == raiz->codigo){
+
+        raiz = NULL;
+    }
+    
+
+    buscar(buscarC, raizF);
+    if ((CodigoB->der == NULL) && (CodigoB->izq == NULL))
+    {
+        eliminarCaso1(raizF);
+
+
+    } else if ((CodigoB->der == NULL) && (CodigoB->der != NULL)  &&
+              (CodigoB->izq == NULL)   && (CodigoB->izq != NULL)){
+
+        eliminarCaso2(raizF); 
+
+    } else if (buscarC == raizF->codigo){
+
+        raizF = NULL;
+    }
+
+    
+
 }
 
 int main(){
 
-    int opcion = 0, opcion2 = 0;
+    int opcion = 0, opcion2 = 0, code = 0;
     cout<<"";
     cout<<"Bienvenido, digite la opcion que desee realizar."<<endl;
 
@@ -385,9 +509,27 @@ int main(){
                 break;
 
             case 2:
+
+                cout<<"Ingrese el codigo del estudiante a buscar: ";
+                cin>>code;
+                cout<<endl;
+
+                buscar(code, raiz);
+                if (code == CodigoB->codigo)
+                {
+                    cout<<"Estudiante: "<<CodigoB->apellido<<" "<<CodigoB->nombre<<endl;
+                    cout<<"Fecha de nacimiento: "<<CodigoB->dia<<"/"<<CodigoB->mes<<"/"<<CodigoB->year<<endl;
+                } else {
+
+                    cout<<"Estudiante no encontrado. "<<endl;
+                }
+                
+
                 break;
 
             case 3:
+                eliminar();
+                cout<<endl;
                 break;
 
             case 4:
@@ -401,30 +543,64 @@ int main(){
 
                 switch (opcion2) {
                     case 1:
-                        recoPre(); break;
+                        cout<<"****************************************"<<endl;
+                        cout<<"Preorden (Codigo)."<<endl;
+                        cout<<"****************************************"<<endl;
+                        preorden(raiz);
+
+                        cout<<endl;
+
+                        cout<<"****************************************"<<endl;
+                        cout<<"Preorden (Fecha)."<<endl;
+                        cout<<"****************************************"<<endl;
+                        preorden(raizF); break;
 
                     case 2:
-                        recoIn(); break;
+                        cout<<"****************************************"<<endl;
+                        cout<<"Inorden (Codigo)."<<endl;
+                        cout<<"****************************************"<<endl;
+                        indorden(raiz);
+
+                        cout<<endl;
+
+                        cout<<"****************************************"<<endl;
+                        cout<<"Inorden (Fecha)."<<endl;
+                        cout<<"****************************************"<<endl;
+                        indorden(raizF); break;
 
                     case 3:
-                        recoPost(); break;
+                        cout<<"*****************************************"<<endl;
+                        cout<<"Postorden (Codigo)."<<endl;
+                        cout<<"*****************************************"<<endl;
+                        postorden(raiz);
+
+                        cout<<endl;
+
+                        cout<<"****************************************"<<endl;
+                        cout<<"Postorden (Fecha)."<<endl;
+                        cout<<"****************************************"<<endl;
+                        postorden(raizF); break;
 
                     case 4:
                         cout<<"Muchas gracias por confiar en nosotros!"<<endl;
+                        cout<<endl;
                         break;
 
                     default:
                         cout << "Opcion no valida." << endl;
+                        cout<<endl;
                         break;
                 }
                 break;
 
             case 5:
                 cout << "¡Muchas gracias por confiar en nosotros!" << endl;
+                cout<<endl;
                 break;
 
             default:
                 cout << "Opcion no valida." << endl;
+                cout<<endl;
                 break;
         }
 
