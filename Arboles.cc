@@ -1,6 +1,6 @@
 //created by:
 //Cabezas Pinillo Luis (Filantropo anónimo y Fotografo de google maps por desparche)
-//Fernandez Fernando (Consejero de parejas y Batman en sus tiempos libres)
+//Fernandez Riascos Andrés (Consejero de parejas y Batman en sus tiempos libres)
 
 #include <iostream>
 #include <malloc.h>
@@ -607,3 +607,4 @@ int main(){
     } while (opcion != 5);
     
 }
+
